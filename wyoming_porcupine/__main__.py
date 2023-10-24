@@ -50,7 +50,9 @@ class State:
         self.detector_cache: Dict[str, List[Detector]] = defaultdict(list)
         self.detector_lock = asyncio.Lock()
 
-    async def get_porcupine(self, keyword_name: str, sensitivity: float) -> Detector:
+    async def get_porcupine(
+        self, keyword_name: str, sensitivity: float, access_key: str
+    ) -> Detector:
         keyword = self.keywords.get(keyword_name)
         if keyword is None:
             raise ValueError(f"No keyword {keyword_name}")
@@ -78,6 +80,7 @@ class State:
             model_path=str(self.pv_lib_paths[keyword.language]),
             keyword_paths=[str(keyword.model_path)],
             sensitivities=[sensitivity],
+            access_key=access_key,
         )
 
         return Detector(porcupine, sensitivity)
@@ -92,6 +95,7 @@ async def main() -> None:
     )
     parser.add_argument("--system", help="linux or raspberry-pi")
     parser.add_argument("--sensitivity", type=float, default=0.5)
+    parser.add_argument("--access-key", type=str, required=True)
     #
     parser.add_argument("--debug", action="store_true", help="Log DEBUG messages")
     args = parser.parse_args()
@@ -267,7 +271,7 @@ class PorcupineEventHandler(AsyncEventHandler):
 
     async def _load_keyword(self, keyword_name: str):
         self.detector = await self.state.get_porcupine(
-            keyword_name, self.cli_args.sensitivity
+            keyword_name, self.cli_args.sensitivity, self.cli_args.access_key
         )
         self.keyword_name = keyword_name
         self.chunk_format = "h" * self.detector.porcupine.frame_length
