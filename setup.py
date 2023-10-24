@@ -12,23 +12,23 @@ if requirements_path.is_file():
     with open(requirements_path, "r", encoding="utf-8") as requirements_file:
         requirements = requirements_file.read().splitlines()
 
-module_dir = this_dir / "wyoming_porcupine1"
+module_dir = this_dir / "wyoming_porcupine"
 data_dir = module_dir / "data"
 data_files = list(data_dir.rglob("*.pv")) + list(data_dir.rglob("*.ppn"))
 
 # -----------------------------------------------------------------------------
 
 setup(
-    name="wyoming_porcupine1",
+    name="wyoming_porcupine",
     version="1.0.1",
     description="Wyoming Server for Porcupine 1",
-    url="http://github.com/rhasspy/wyoming-porcupine1",
+    url="http://github.com/rhasspy/wyoming-porcupine",
     author="Michael Hansen",
     author_email="mike@rhasspy.org",
     license="MIT",
     packages=setuptools.find_packages(),
     package_data={
-        "wyoming_porcupine1": [str(p.relative_to(module_dir)) for p in data_files]
+        "wyoming_porcupine": [str(p.relative_to(module_dir)) for p in data_files]
     },
     install_requires=requirements,
     classifiers=[
