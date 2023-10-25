@@ -2,7 +2,7 @@
 
 ## 1.0.1
 
-- Try to fix memory leak by caching detectors
+- Add support for custom keywords
 
 ## 1.0.0
 

@@ -97,6 +97,13 @@ async def main() -> None:
     parser.add_argument("--sensitivity", type=float, default=0.5)
     parser.add_argument("--access-key", type=str, required=True)
     #
+    parser.add_argument(
+        "--custom-keyword-dir",
+        action="append",
+        default=[],
+        help="Path to directory with custom keywords",
+    )
+    #
     parser.add_argument("--debug", action="store_true", help="Log DEBUG messages")
     args = parser.parse_args()
     logging.basicConfig(level=logging.DEBUG if args.debug else logging.INFO)
@@ -110,6 +117,7 @@ async def main() -> None:
             args.system = "linux"
 
     args.data_dir = Path(args.data_dir)
+    args.custom_keyword_dir = [Path(d) for d in args.custom_keyword_dir]
 
     # lang -> path
     pv_lib_paths: Dict[str, Path] = {}
@@ -127,6 +135,23 @@ async def main() -> None:
         kw_lang = kw_path.parent.parent.name
         kw_name = kw_path.stem.rsplit("_", maxsplit=1)[0]
         keywords[kw_name] = Keyword(language=kw_lang, name=kw_name, model_path=kw_path)
+
+    # custom models, files are of the form mykeyword_en_linux_v2_2_0.ppn
+    for dir in args.custom_keyword_dir:
+        for kw_path in dir.glob("*.ppn"):
+            try:
+                (kw_name, kw_lang, kw_system, _) = kw_path.stem.split("_", maxsplit=3)
+            except:
+                _LOGGER.warning("Incorrect keyword filename (%s), ignoring", kw_path)
+                continue
+
+            if kw_system != args.system:
+                _LOGGER.warning("Incorrect keyword system (%s), ignoring", kw_path)
+                continue
+
+            keywords[kw_name] = Keyword(
+                language=kw_lang, name=kw_name, model_path=kw_path
+            )
 
     wyoming_info = Info(
         wake=[
