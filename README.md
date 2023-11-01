@@ -3,9 +3,9 @@
 [Wyoming protocol](https://github.com/rhasspy/wyoming) server for the [porcupine](https://github.com/Picovoice/porcupine) wake word detection system.
 
 This is an experimental fork of [rhasspy/wyoming-porcupine1](https://github.com/rhasspy/wyoming-porcupine1) that uses
-the latest version (v2.2) of porcupine.
+the latest version (v3.0) of porcupine.
 
-Advantages of v2 compared to v1:
+Advantages of v3 compared to v1:
 - Improved accuracy
 - More supported languages and pre-trained wake words
 - Ability to use custom wake words
